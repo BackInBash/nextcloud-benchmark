@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/studio-b12/gowebdav"
 )
@@ -73,8 +74,9 @@ func main() {
 		fmt.Println(err)
 	}
 
+	start := time.Now()
 	// Temp File
-	f := make([]byte, 0x500000)
+	f := make([]byte, 0x100000)
 	for i := 0; i < cli.num; i++ {
 		path := cli.path + "/x" + strconv.Itoa(i)
 		err := c.MkdirAll(path, 0644)
@@ -82,7 +84,8 @@ func main() {
 			fmt.Println(err)
 		}
 		for x := 0; x < 5; x++ {
-			c.Write(path+"/test"+strconv.Itoa(x)+".bin", f, 0644)
+			go c.Write(path+"/test"+strconv.Itoa(x)+".bin", f, 0644)
 		}
 	}
+	fmt.Println(time.Since(start))
 }
